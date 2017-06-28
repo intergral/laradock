@@ -110,9 +110,37 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 ARG INSTALL_MONGO=false
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb && \
-    docker-php-ext-enable mongodb \
+    pecl install mongo && \
+    docker-php-ext-enable mongo \
 ;fi
+
+#####################################
+# Kafka:
+#####################################
+
+RUN apt-get install -y python git
+
+# Install the kafka c extension
+RUN git clone https://github.com/edenhill/librdkafka \
+    && ( \
+        cd librdkafka \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r librdkafka
+
+# Install the kafka php extension
+RUN git clone https://github.com/arnaud-lb/php-rdkafka \
+    && ( \
+        cd php-rdkafka \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r php-rdkafka
+RUN docker-php-ext-enable rdkafka
 
 #####################################
 # ZipArchive:

@@ -78,6 +78,12 @@ ENV TZ ${TZ}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #####################################
+# Subversion/Python:
+#####################################
+
+RUN apt-get install -y subversion python
+
+#####################################
 # Composer:
 #####################################
 
@@ -189,10 +195,38 @@ ARG INSTALL_MONGO=false
 ENV INSTALL_MONGO ${INSTALL_MONGO}
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb && \
-    echo "extension=mongodb.so" >> /etc/php/5.6/mods-available/mongodb.ini && \
+    pecl install mongo && \
+    echo "extension=mongo.so" >> /etc/php/5.6/mods-available/mongodb.ini && \
     ln -s /etc/php/5.6/mods-available/mongodb.ini /etc/php/5.6/cli/conf.d/30-mongodb.ini \
 ;fi
+
+#####################################
+# Kafka:
+#####################################
+
+# Install the kafka c extension
+RUN git clone https://github.com/edenhill/librdkafka \
+    && ( \
+        cd librdkafka \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r librdkafka
+
+# Install the kafka php extension
+RUN git clone https://github.com/arnaud-lb/php-rdkafka \
+    && ( \
+        cd php-rdkafka \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r php-rdkafka
+
+RUN echo "extension=rdkafka.so" >> /etc/php/5.6/mods-available/rdkafka.ini && \
+    ln -s /etc/php/5.6/mods-available/rdkafka.ini /etc/php/5.6/cli/conf.d/30-rdkafka.ini
 
 #####################################
 # Drush:
