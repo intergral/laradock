@@ -16,7 +16,11 @@ RUN mkdir -p /var/www
 
 ADD server.ini /etc/hhvm/server.ini
 
-RUN usermod -u 1000 www-data
+ARG PUID=1000
+
+ENV PUID ${PUID}
+
+RUN usermod -u ${PUID} www-data
 
 WORKDIR /var/www
 
