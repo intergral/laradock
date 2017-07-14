@@ -142,7 +142,7 @@ RUN echo "" >> ~/.bashrc && \
 ARG INSTALL_XDEBUG=false
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
-    apt-get install -y --force-yes php5.6-xdebug && \
+    apt-get update && apt-get install -y --force-yes php5.6-xdebug && \
     sed -i 's/^;//g' /etc/php/5.6/cli/conf.d/20-xdebug.ini && \
     echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/vendor/bin/phpunit'" >> ~/.bashrc \
 ;fi
@@ -233,7 +233,6 @@ RUN echo "extension=rdkafka.so" >> /etc/php/5.6/mods-available/rdkafka.ini && \
 #####################################
 
 RUN apt-get update && apt-get install acl
-RUN setfacl -d -R -m o::rwx /var/www
 
 #####################################
 # Drush:
@@ -478,6 +477,7 @@ USER laradock
 USER root
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN mkdir /var/www && setfacl -d -R -m o::rwx /var/www
 
 # Set default work directory
 WORKDIR /var/www
