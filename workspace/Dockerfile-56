@@ -229,6 +229,13 @@ RUN echo "extension=rdkafka.so" >> /etc/php/5.6/mods-available/rdkafka.ini && \
     ln -s /etc/php/5.6/mods-available/rdkafka.ini /etc/php/5.6/cli/conf.d/30-rdkafka.ini
 
 #####################################
+# Permissions:
+#####################################
+
+RUN apt-get update && apt-get install acl
+RUN setfacl -d -R -m o::rwx /var/www
+
+#####################################
 # Drush:
 #####################################
 USER root
