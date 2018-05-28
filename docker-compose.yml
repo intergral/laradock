@@ -144,6 +144,7 @@ services:
         - "dockerhost:${DOCKER_HOST_IP}"
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+        - http_proxy=http://cluster.bbn.intergral.com:3128
       depends_on:
         - workspace
       networks:
@@ -707,4 +708,4 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
       ports:
         - 9010:9000
-      
+

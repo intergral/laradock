@@ -497,7 +497,7 @@ RUN if [ ${INSTALL_LARAVEL_ENVOY} = true ]; then \
 # Laravel Installer:
 ###########################################################################
 
-USER root
+USER laradock
 
 ARG COMPOSER_REPO_PACKAGIST
 ENV COMPOSER_REPO_PACKAGIST ${COMPOSER_REPO_PACKAGIST}
@@ -510,7 +510,8 @@ ARG INSTALL_LARAVEL_INSTALLER=false
 
 RUN if [ ${INSTALL_LARAVEL_INSTALLER} = true ]; then \
     # Install the Laravel Installer
-	composer global require "laravel/installer" \
+	composer global require "laravel/installer"; \
+	composer global require "laravel/lumen-installer" \
 ;fi
 
 ###########################################################################

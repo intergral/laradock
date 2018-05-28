@@ -416,6 +416,8 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
 # Check PHP version:
 ###########################################################################
 
+RUN docker-php-ext-install sockets
+
 ARG PHP_VERSION=${PHP_VERSION}
 
 RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
