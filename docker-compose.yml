@@ -138,8 +138,8 @@ services:
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-      ports:
-        - "${NGINX_PHP_UPSTREAM_PORT}:9000"
+      expose:
+        - "9000"
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       environment:
