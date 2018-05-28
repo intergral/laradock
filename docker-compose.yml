@@ -1,9 +1,9 @@
 version: '3'
 
 networks:
-  frontend:
+  frontend-php7:
     driver: ${NETWORKS_DRIVER}
-  backend:
+  backend-php7:
     driver: ${NETWORKS_DRIVER}
 
 volumes:
@@ -101,8 +101,8 @@ services:
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### PHP-FPM ##############################################
     php-fpm:
@@ -138,8 +138,8 @@ services:
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-      expose:
-        - "9000"
+      ports:
+        - "${NGINX_PHP_UPSTREAM_PORT}:9000"
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       environment:
@@ -148,7 +148,7 @@ services:
       depends_on:
         - workspace
       networks:
-        - backend
+        - backend-php7
 
 ### PHP Worker ############################################
     php-worker:
@@ -165,7 +165,7 @@ services:
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       networks:
-        - backend
+        - backend-php7
 
 ### NGINX Server #########################################
     nginx:
@@ -184,8 +184,8 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Blackfire ########################################
     blackfire:
@@ -196,7 +196,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - backend-php7
 
 ### Apache Server ########################################
     apache2:
@@ -217,8 +217,8 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### HHVM #################################################
     hhvm:
@@ -230,8 +230,8 @@ services:
       depends_on:
         - workspace
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Minio ################################################
     minio:
@@ -245,8 +245,8 @@ services:
         - MINIO_ACCESS_KEY=access
         - MINIO_SECRET_KEY=secretkey
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### MySQL ################################################
     mysql:
@@ -266,7 +266,7 @@ services:
       ports:
         - "${MYSQL_PORT}:3306"
       networks:
-        - backend
+        - backend-php7
 
 ### Percona ################################################
     percona:
@@ -283,7 +283,7 @@ services:
       ports:
         - "${PERCONA_PORT}:3306"
       networks:
-        - backend
+        - backend-php7
 
 ### MSSQL ################################################
     mssql:
@@ -298,7 +298,7 @@ services:
       ports:
         - "${MSSQL_PORT}:1433"
       networks:
-        - backend
+        - backend-php7
 
 ### MariaDB ##############################################
     mariadb:
@@ -314,7 +314,7 @@ services:
         - MYSQL_PASSWORD=${MARIADB_PASSWORD}
         - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
       networks:
-        - backend
+        - backend-php7
 
 ### PostgreSQL ###########################################
     postgres:
@@ -328,7 +328,7 @@ services:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       networks:
-        - backend
+        - backend-php7
 
 ### PostgreSQL PostGis ###################################
     postgres-postgis:
@@ -342,7 +342,7 @@ services:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       networks:
-        - backend
+        - backend-php7
 
 ### Neo4j ################################################
     neo4j:
@@ -355,7 +355,7 @@ services:
       volumes:
         - ${DATA_PATH_HOST}/neo4j:/var/lib/neo4j/data
       networks:
-        - backend
+        - backend-php7
 
 ### MongoDB ##############################################
     mongo:
@@ -365,7 +365,7 @@ services:
       volumes:
         - ${DATA_PATH_HOST}/mongo:/data/db
       networks:
-        - backend
+        - backend-php7
 
 ### RethinkDB ##############################################
     rethinkdb:
@@ -375,7 +375,7 @@ services:
       volumes:
         - ${DATA_PATH_HOST}/rethinkdb:/data/rethinkdb_data
       networks:
-        - backend
+        - backend-php7
 
 ### Redis ################################################
     redis:
@@ -385,7 +385,7 @@ services:
       ports:
         - "${REDIS_PORT}:6379"
       networks:
-        - backend
+        - backend-php7
 
 ### Aerospike ##########################################
     aerospike:
@@ -399,7 +399,7 @@ services:
         - "${AEROSPIKE_HEARTBEAT_PORT}:3002"
         - "${AEROSPIKE_INFO_PORT}:3003"
       networks:
-        - backend
+        - backend-php7
 
 ### Memcached ############################################
     memcached:
@@ -411,7 +411,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - backend-php7
 
 ### Beanstalkd ###########################################
     beanstalkd:
@@ -422,7 +422,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - backend-php7
 
 ### RabbitMQ #############################################
     rabbitmq:
@@ -438,7 +438,7 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - backend
+        - backend-php7
 
 ### Beanstalkd Console ###################################
     beanstalkd-console:
@@ -448,7 +448,7 @@ services:
       depends_on:
         - beanstalkd
       networks:
-        - backend
+        - backend-php7
 
 ### Caddy Server #########################################
     caddy:
@@ -464,8 +464,8 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### phpMyAdmin ###########################################
     phpmyadmin:
@@ -480,8 +480,8 @@ services:
       depends_on:
         - "${PMA_DB_ENGINE}"
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Adminer ###########################################
     adminer:
@@ -494,8 +494,8 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### pgAdmin ##############################################
     pgadmin:
@@ -507,8 +507,8 @@ services:
       depends_on:
         - postgres
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 
 ### ElasticSearch ########################################
@@ -530,8 +530,8 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 
 ### Kibana ##############################################
@@ -542,8 +542,8 @@ services:
       depends_on:
         - elasticsearch
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Certbot #########################################
     certbot:
@@ -556,7 +556,7 @@ services:
         - CN="fake.domain.com"
         - EMAIL="fake.email@gmail.com"
       networks:
-        - frontend
+        - frontend-php7
 
 ### Mailhog ################################################
     mailhog:
@@ -565,8 +565,8 @@ services:
         - "1025:1025"
         - "8025:8025"
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### MailDev ##############################################
     maildev:
@@ -575,8 +575,8 @@ services:
         - "${MAILDEV_HTTP_PORT}:80"
         - "${MAILDEV_SMTP_PORT}:25"
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Selenium ###############################################
     selenium:
@@ -586,7 +586,7 @@ services:
       volumes:
         - /dev/shm:/dev/shm
       networks:
-        - frontend
+        - frontend-php7
 
 ### Varnish ##########################################
     proxy:
@@ -604,7 +604,7 @@ services:
       links:
         - workspace
       networks:
-        - frontend
+        - frontend-php7
 
     proxy2:
       build: ./varnish
@@ -621,7 +621,7 @@ services:
       links:
         - workspace
       networks:
-        - frontend
+        - frontend-php7
 
 ### HAProxy ####################################
     haproxy:
@@ -647,8 +647,8 @@ services:
         - ${JENKINS_HOME}:/var/jenkins_home
         - /var/run/docker.sock:/var/run/docker.sock
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
 
 ### Grafana ################################################
     grafana:
@@ -659,7 +659,7 @@ services:
       ports:
         - "${GRAFANA_PORT}:3000"
       networks:
-        - backend
+        - backend-php7
 
 ### Laravel Echo Server #######################################
     laravel-echo-server:
@@ -672,8 +672,8 @@ services:
       links:
         - redis
       networks:
-        - frontend
-        - backend
+        - frontend-php7
+        - backend-php7
         
 ### Solr ################################################
     solr:
@@ -687,7 +687,7 @@ services:
       ports:
         - "${SOLR_PORT}:8983"
       networks:
-        - backend
+        - backend-php7
 
 ### AWS EB-CLI ################################################
     aws:
