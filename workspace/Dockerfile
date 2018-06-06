@@ -610,6 +610,23 @@ RUN set -eux; if [ ${INSTALL_MSSQL} = true ]; then \
 ;fi
 
 ###########################################################################
+# Tideways XHProf:
+###########################################################################
+
+RUN apt update && apt install -y git \
+    && git clone https://github.com/tideways/php-xhprof-extension.git /tmp/tideways_xhprof \
+    && ( \
+        cd /tmp/tideways_xhprof \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r /tmp/tideways_xhprof \
+    && echo "extension=tideways_xhprof.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-tideways_xhprof.ini \
+    && php -m | grep -q 'tideways_xhprof'
+
+###########################################################################
 # Minio:
 ###########################################################################
 

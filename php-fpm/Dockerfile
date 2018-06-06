@@ -289,6 +289,23 @@ RUN if [ ${INSTALL_OPCACHE} = true ]; then \
 COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 ###########################################################################
+# Tideways XHProf:
+###########################################################################
+
+RUN apt update && apt install -y git \
+    && git clone https://github.com/tideways/php-xhprof-extension.git /tmp/tideways_xhprof \
+    && ( \
+        cd /tmp/tideways_xhprof \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r /tmp/tideways_xhprof \
+    && docker-php-ext-enable tideways_xhprof
+
+
+###########################################################################
 # Mysqli Modifications:
 ###########################################################################
 
