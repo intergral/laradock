@@ -430,6 +430,21 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
 ;fi
 
 ###########################################################################
+# Kafka:
+###########################################################################
+
+RUN git clone https://github.com/edenhill/librdkafka.git /tmp/kafka && \
+    ( \
+        cd /tmp/kafka && \
+        ./configure && \
+        make && \
+        make install \
+    ) && \
+    rm -r /tmp/kafka && \
+    pecl install rdkafka && \
+    docker-php-ext-enable rdkafka
+
+###########################################################################
 # Check PHP version:
 ###########################################################################
 
